@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ルノルマン3枚引き（過去・現在・未来）＋アドバイス</title>
+<style>
+  :root{
+    --cream:#FFF6E6;
+    --cream2:#FFEFD1;
+    --ink:#3b2f2a;
+    --accent:#d6a6ff;
+    --gold:#f3d77b;
+    --card:#ffffffcc;
+    --shadow: 0 14px 40px rgba(40, 20, 10, .12);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Hiragino Kaku Gothic ProN","Meiryo", sans-serif;
+    color:var(--ink);
+    background: radial-gradient(1200px 700px at 20% 10%, #ffffff 0%, var(--cream) 35%, var(--cream2) 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  /* きらきら背景 */
+  .sparkle-layer{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:.55;
+    mix-blend-mode:screen;
+    background:
+      radial-gradient(6px 6px at 10% 30%, rgba(255,255,255,.9), transparent 60%),
+      radial-gradient(4px 4px at 28% 12%, rgba(255,255,255,.75), transparent 60%),
+      radial-gradient(5px 5px at 60% 20%, rgba(255,255,255,.8), transparent 60%),
+      radial-gradient(3px 3px at 80% 35%, rgba(255,255,255,.7), transparent 60%),
+      radial-gradient(6px 6px at 75% 75%, rgba(255,255,255,.8), transparent 60%),
+      radial-gradient(4px 4px at 35% 78%, rgba(255,255,255,.75), transparent 60%);
+    filter: blur(.2px);
+    animation: twinkle 5.5s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle{
+    from{transform: translateY(0) scale(1); opacity:.35;}
+    to{transform: translateY(-8px) scale(1.02); opacity:.7;}
+  }
+
+  header{
+    padding:28px 18px 10px;
+    text-align:center;
+  }
+  h1{
+    margin:0;
+    font-size: clamp(20px, 3.8vw, 34px);
+    letter-spacing:.02em;
+  }
+  .sub{
+    margin:10px auto 0;
+    max-width: 820px;
+    line-height:1.7;
+    opacity:.9;
+    font-size:14px;
+  }
+
+  .wrap{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 14px 16px 48px;
+  }
+
+  .panel{
+    background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.7));
+    border: 1px solid rgba(255,255,255,.7);
+    box-shadow: var(--shadow);
+    border-radius: 18px;
+    padding: 18px;
+    position:relative;
+    overflow:hidden;
+  }
+  .panel:before{
+    content:"";
+    position:absolute;
+    inset:-30%;
+    background: radial-gradient(closest-side, rgba(243,215,123,.30), transparent 60%);
+    transform: rotate(12deg);
+    pointer-events:none;
+  }
+
+  .row{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  .pill{
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+    padding:10px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.7);
+    border:1px solid rgba(255,255,255,.75);
+    backdrop-filter: blur(6px);
+  }
+
+  .choices{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    border:0;
+    cursor:pointer;
+    padding:10px 14px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #ffffff, #fff7ea);
+    color:var(--ink);
+    box-shadow: 0 8px 20px rgba(60,30,10,.10);
+    transition: transform .08s ease, box-shadow .2s ease;
+    font-weight:700;
+    letter-spacing:.02em;
+    position:relative;
+    overflow:hidden;
+  }
+  .btn:active{ transform: translateY(1px) scale(.99); }
+  .btn:hover{ box-shadow: 0 10px 24px rgba(60,30,10,.14); }
+  .btn.primary{
+    background: linear-gradient(180deg, rgba(214,166,255,.55), rgba(243,215,123,.55));
+  }
+  .btn.ghost{
+    background: rgba(255,255,255,.55);
+    border:1px solid rgba(120,80,40,.15);
+  }
+  .btn[disabled]{
+    opacity:.55;
+    cursor:not-allowed;
+    box-shadow:none;
+  }
+
+  .status{
+    font-size:13px;
+    opacity:.85;
+    line-height:1.6;
+  }
+
+  .cards{
+    margin-top: 16px;
+    display:grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+  @media (max-width: 860px){
+    .cards{ grid-template-columns: 1fr; }
+  }
+
+  .cardSlot{
+    background: rgba(255,255,255,.55);
+    border: 1px solid rgba(255,255,255,.75);
+    border-radius: 18px;
+    padding: 14px;
+    box-shadow: 0 10px 24px rgba(60,30,10,.08);
+    position:relative;
+    overflow:hidden;
+  }
+  .cardSlot:after{
+    content:"";
+    position:absolute;
+    inset:-40%;
+    background: radial-gradient(closest-side, rgba(214,166,255,.18), transparent 60%);
+    transform: rotate(-10deg);
+    pointer-events:none;
+  }
+
+  .slotTitle{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom: 10px;
+  }
+  .badge{
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.75);
+    border: 1px solid rgba(120,80,40,.12);
+    font-weight:700;
+  }
+
+  /* カード（フリップ） */
+  .flip{
+    width: 100%;
+    height: 170px;
+    perspective: 900px;
+    position:relative;
+    z-index:1;
+  }
+  .flipInner{
+    width:100%;
+    height:100%;
+    transition: transform .7s cubic-bezier(.2,.8,.2,1);
+    transform-style:preserve-3d;
+    border-radius: 16px;
+    box-shadow: 0 14px 32px rgba(60,30,10,.12);
+  }
+  .flip.isOpen .flipInner{
+    transform: rotateY(180deg);
+  }
+  .face{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:16px;
+    backface-visibility:hidden;
+    overflow:hidden;
+  }
+  .back{
+    background:
+      radial-gradient(18px 18px at 18% 22%, rgba(255,255,255,.75), transparent 60%),
+      radial-gradient(12px 12px at 62% 42%, rgba(255,255,255,.65), transparent 60%),
+      radial-gradient(16px 16px at 78% 76%, rgba(255,255,255,.70), transparent 60%),
+      linear-gradient(160deg, rgba(214,166,255,.65), rgba(243,215,123,.65));
+    border:1px solid rgba(255,255,255,.75);
+    color: rgba(60,30,10,.75);
+    font-weight:900;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+  }
+  .front{
+    transform: rotateY(180deg);
+    background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.78));
+    border: 1px solid rgba(255,255,255,.85);
+    padding: 14px;
+    text-align:center;
+    flex-direction:column;
+    gap:8px;
+  }
+  .cardName{
+    font-size: 18px;
+    font-weight: 900;
+  }
+  .cardKey{
+    font-size: 12px;
+    opacity:.85;
+    display:inline-flex;
+    gap:8px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .chip{
+    padding:5px 9px;
+    border-radius: 999px;
+    background: rgba(243,215,123,.22);
+    border:1px solid rgba(243,215,123,.30);
+    font-weight:700;
+  }
+
+  .story{
+    position:relative;
+    z-index:1;
+    margin-top: 12px;
+    background: rgba(255,255,255,.68);
+    border:1px solid rgba(120,80,40,.12);
+    border-radius: 14px;
+    padding: 12px 12px;
+    font-size: 13px;
+    line-height: 1.8;
+    min-height: 68px;
+  }
+
+  .adviceWrap{
+    margin-top: 14px;
+    display:none;
+  }
+  .adviceWrap.show{ display:block; }
+
+  .adviceTitle{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin: 6px 0 10px;
+  }
+  .adviceTitle h2{
+    margin:0;
+    font-size: 16px;
+    letter-spacing:.02em;
+  }
+
+  .hr{
+    height:1px;
+    background: linear-gradient(90deg, transparent, rgba(120,80,40,.18), transparent);
+    margin: 14px 0;
+  }
+
+  .tiny{
+    font-size:12px;
+    opacity:.8;
+  }
+
+  .toast{
+    margin-top:10px;
+    font-size:12px;
+    opacity:.85;
+  }
+
+  .glow{
+    position:relative;
+  }
+  .glow:before{
+    content:"";
+    position:absolute;
+    inset:-12px;
+    background: radial-gradient(closest-side, rgba(214,166,255,.25), transparent 65%);
+    filter: blur(8px);
+    opacity:.7;
+    pointer-events:none;
+  }
+</style>
+</head>
+
+<body>
+<div class="sparkle-layer" aria-hidden="true"></div>
+
+<header>
+  <h1>ルノルマンカード 3枚引き</h1>
+  <div class="sub">
+    恋愛／仕事／全体運を選んで、<b>過去 → 現在 → 未来</b>の順にカードを開きます。最後に<b>アドバイスカード</b>を1枚追加で引き、ストーリー仕立てで読み解きます。
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="panel">
+    <div class="row">
+      <div class="pill">
+        <span style="font-weight:900;">テーマ</span>
+        <div class="choices">
+          <button class="btn ghost" id="pickLove">恋愛</button>
+          <button class="btn ghost" id="pickWork">仕事</button>
+          <button class="btn ghost" id="pickOverall">全体運</button>
+        </div>
+      </div>
+
+      <div class="pill">
+        <button class="btn primary" id="btnStart" disabled>占いをはじめる</button>
+        <button class="btn" id="btnNext" disabled>次のカードを開く</button>
+        <button class="btn ghost" id="btnReset">リセット</button>
+      </div>
+    </div>
+
+    <div class="toast" id="toast">テーマを選ぶと「占いをはじめる」が押せます。</div>
+
+    <div class="hr"></div>
+
+    <div class="status" id="status">
+      まだカードは引かれていません。<b>テーマ</b>を選んでください。
+    </div>
+
+    <div class="cards">
+      <!-- Past -->
+      <section class="cardSlot">
+        <div class="slotTitle">
+          <div class="badge">過去</div>
+          <div class="tiny" id="pastHint">—</div>
+        </div>
+
+        <div class="flip" id="flipPast" aria-label="過去のカード">
+          <div class="flipInner">
+            <div class="face back">LENORMAND</div>
+            <div class="face front">
+              <div class="cardName" id="pastName">?</div>
+              <div class="cardKey" id="pastKeys"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="story" id="pastStory">ここにストーリーが表示されます。</div>
+      </section>
+
+      <!-- Present -->
+      <section class="cardSlot">
+        <div class="slotTitle">
+          <div class="badge">現在</div>
+          <div class="tiny" id="presentHint">—</div>
+        </div>
+
+        <div class="flip" id="flipPresent" aria-label="現在のカード">
+          <div class="flipInner">
+            <div class="face back">LENORMAND</div>
+            <div class="face front">
+              <div class="cardName" id="presentName">?</div>
+              <div class="cardKey" id="presentKeys"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="story" id="presentStory">ここにストーリーが表示されます。</div>
+      </section>
+
+      <!-- Future -->
+      <section class="cardSlot">
+        <div class="slotTitle">
+          <div class="badge">未来</div>
+          <div class="tiny" id="futureHint">—</div>
+        </div>
+
+        <div class="flip" id="flipFuture" aria-label="未来のカード">
+          <div class="flipInner">
+            <div class="face back">LENORMAND</div>
+            <div class="face front">
+              <div class="cardName" id="futureName">?</div>
+              <div class="cardKey" id="futureKeys"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="story" id="futureStory">ここにストーリーが表示されます。</div>
+      </section>
+    </div>
+
+    <div class="adviceWrap" id="adviceWrap">
+      <div class="hr"></div>
+      <div class="adviceTitle">
+        <span class="badge glow">アドバイスカード</span>
+        <h2 id="adviceThemeTitle">あなたへのひと言</h2>
+      </div>
+
+      <div class="cardSlot">
+        <div class="slotTitle">
+          <div class="badge">Advice</div>
+          <div class="tiny" id="adviceHint">—</div>
+        </div>
+
+        <div class="flip" id="flipAdvice" aria-label="アドバイスカード">
+          <div class="flipInner">
+            <div class="face back">GUIDE</div>
+            <div class="face front">
+              <div class="cardName" id="adviceName">?</div>
+              <div class="cardKey" id="adviceKeys"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="story" id="adviceStory">ここにアドバイスのストーリーが表示されます。</div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+    <div class="tiny">
+      ※これは創作要素を含むカードリーディング体験です。気持ちが軽くなる解釈を選び取ってください。
+    </div>
+  </div>
+</div>
+
+<script>
+/** 36枚 ルノルマン（代表的キーワード） */
+const DECK = [
+  { id:1,  name:"騎士",      keys:["知らせ","到来","スピード"] },
+  { id:2,  name:"クローバー", keys:["小さな幸運","チャンス","軽やかさ"] },
+  { id:3,  name:"船",        keys:["旅","距離","挑戦"] },
+  { id:4,  name:"家",        keys:["安心","基盤","居場所"] },
+  { id:5,  name:"木",        keys:["成長","健康","時間"] },
+  { id:6,  name:"雲",        keys:["迷い","不透明","揺れ"] },
+  { id:7,  name:"蛇",        keys:["駆け引き","誘惑","複雑さ"] },
+  { id:8,  name:"棺",        keys:["区切り","終わりと始まり","手放し"] },
+  { id:9,  name:"花束",      keys:["喜び","好意","プレゼント"] },
+  { id:10, name:"鎌",        keys:["決断","切り替え","瞬間"] },
+  { id:11, name:"鞭",        keys:["議論","繰り返し","刺激"] },
+  { id:12, name:"鳥",        keys:["会話","噂","落ち着かない"] },
+  { id:13, name:"子ども",    keys:["新しい始まり","純粋","小さな一歩"] },
+  { id:14, name:"狐",        keys:["用心","仕事勘","計算"] },
+  { id:15, name:"熊",        keys:["守り","力","影響力"] },
+  { id:16, name:"星",        keys:["希望","導き","理想"] },
+  { id:17, name:"コウノトリ",keys:["変化","移動","更新"] },
+  { id:18, name:"犬",        keys:["信頼","味方","友情"] },
+  { id:19, name:"塔",        keys:["自立","距離","組織"] },
+  { id:20, name:"庭",        keys:["社交","人前","コミュニティ"] },
+  { id:21, name:"山",        keys:["障害","遅れ","高い壁"] },
+  { id:22, name:"道",        keys:["選択","分岐","決める"] },
+  { id:23, name:"ネズミ",    keys:["消耗","不安","少しずつ失う"] },
+  { id:24, name:"ハート",    keys:["愛","好意","ときめき"] },
+  { id:25, name:"指輪",      keys:["約束","契約","ご縁"] },
+  { id:26, name:"本",        keys:["秘密","学び","情報"] },
+  { id:27, name:"手紙",      keys:["連絡","書類","メッセージ"] },
+  { id:28, name:"紳士",      keys:["男性性","主体性","キーパーソン"] },
+  { id:29, name:"淑女",      keys:["女性性","受容","キーパーソン"] },
+  { id:30, name:"ユリ",      keys:["成熟","品格","安らぎ"] },
+  { id:31, name:"太陽",      keys:["成功","明るさ","祝福"] },
+  { id:32, name:"月",        keys:["感受性","評価","ムード"] },
+  { id:33, name:"鍵",        keys:["解決","要点","扉が開く"] },
+  { id:34, name:"魚",        keys:["お金","流れ","豊かさ"] },
+  { id:35, name:"錨",        keys:["安定","継続","仕事"] },
+  { id:36, name:"十字架",    keys:["課題","使命","受け止める"] },
+];
+
+const THEMES = {
+  love:   { label:"恋愛",   tone:"やさしく、ときめきを守りながら" },
+  work:   { label:"仕事",   tone:"現実的に、でもあなたの価値を下げずに" },
+  overall:{ label:"全体運", tone:"流れ全体を眺めて、良い波に乗るように" },
+};
+
+const POSITIONS = [
+  { key:"past",    label:"過去",   hint:"ここまでの流れの“種”" },
+  { key:"present", label:"現在",   hint:"いまの空気・中心テーマ" },
+  { key:"future",  label:"未来",   hint:"これからの展開・兆し" },
+];
+
+let selectedThemeKey = null;
+let reading = null;     // {themeKey, cards:[past,present,future], advice, step}
+let usedIds = new Set();
+
+/* UI */
+const toast = document.getElementById("toast");
+const statusBox = document.getElementById("status");
+const btnStart = document.getElementById("btnStart");
+const btnNext  = document.getElementById("btnNext");
+const btnReset = document.getElementById("btnReset");
+
+const pickLove = document.getElementById("pickLove");
+const pickWork = document.getElementById("pickWork");
+const pickOverall = document.getElementById("pickOverall");
+
+const flipPast = document.getElementById("flipPast");
+const flipPresent = document.getElementById("flipPresent");
+const flipFuture = document.getElementById("flipFuture");
+const flipAdvice = document.getElementById("flipAdvice");
+
+const adviceWrap = document.getElementById("adviceWrap");
+const adviceThemeTitle = document.getElementById("adviceThemeTitle");
+
+function setTheme(key){
+  selectedThemeKey = key;
+  for(const [k, el] of [["love",pickLove],["work",pickWork],["overall",pickOverall]]){
+    el.classList.toggle("primary", k===key);
+    el.classList.toggle("ghost", k!==key);
+  }
+  btnStart.disabled = false;
+  toast.textContent = `テーマ「${THEMES[key].label}」を選びました。`;
+  statusBox.innerHTML = `テーマは <b>${THEMES[key].label}</b>。「占いをはじめる」を押してください。`;
+}
+
+pickLove.addEventListener("click", ()=>setTheme("love"));
+pickWork.addEventListener("click", ()=>setTheme("work"));
+pickOverall.addEventListener("click", ()=>setTheme("overall"));
+
+btnReset.addEventListener("click", resetAll);
+btnStart.addEventListener("click", startReading);
+btnNext.addEventListener("click", openNext);
+
+/* Helper */
+function randInt(n){ return Math.floor(Math.random()*n); }
+
+function drawUniqueCard(){
+  // 重複なしで引く
+  if(usedIds.size >= DECK.length) usedIds.clear();
+  let c;
+  do { c = DECK[randInt(DECK.length)]; } while(usedIds.has(c.id));
+  usedIds.add(c.id);
+  return c;
+}
+
+function keysToChips(keys){
+  return keys.map(k=>`<span class="chip">${escapeHtml(k)}</span>`).join("");
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[m]));
+}
+
+function setCardUI(slotKey, card){
+  const nameEl = document.getElementById(`${slotKey}Name`);
+  const keysEl = document.getElementById(`${slotKey}Keys`);
+  const hintEl = document.getElementById(`${slotKey}Hint`);
+
+  nameEl.textContent = card.name;
+  keysEl.innerHTML = keysToChips(card.keys);
+
+  const pos = POSITIONS.find(p=>p.key===slotKey);
+  hintEl.textContent = pos ? pos.hint : "—";
+}
+
+function setStory(slotKey, text){
+  document.getElementById(`${slotKey}Story`).innerHTML = text;
+}
+
+function openFlip(slotKey){
+  const map = { past: flipPast, present: flipPresent, future: flipFuture, advice: flipAdvice };
+  map[slotKey].classList.add("isOpen");
+}
+
+function closeAllFlips(){
+  [flipPast, flipPresent, flipFuture, flipAdvice].forEach(el=>el.classList.remove("isOpen"));
+}
+
+function resetSlot(slotKey){
+  document.getElementById(`${slotKey}Name`).textContent = "?";
+  document.getElementById(`${slotKey}Keys`).innerHTML = "";
+  document.getElementById(`${slotKey}Hint`).textContent = "—";
+  document.getElementById(`${slotKey}Story`).textContent = "ここにストーリーが表示されます。";
+}
+
+/* ストーリー生成（テーマ＆位置＆カードで文章を変える） */
+function storyForCard(themeKey, positionKey, card, contextCards){
+  const theme = THEMES[themeKey].label;
+
+  // position flavor
+  const posLine = {
+    past: "少し前、あなたの心（状況）の“土台”にこの出来事がありました。",
+    present: "いま、空気の中心にこのテーマがふわりと漂っています。",
+    future: "これから、現実のほうへ形になって現れてきそうです。"
+  }[positionKey];
+
+  // theme tint
+  const tint = {
+    love: {
+      lead: "恋愛の物語として読むなら、",
+      focus: "気持ちの温度・距離感・言葉のやり取り"
+    },
+    work: {
+      lead: "仕事の物語として読むなら、",
+      focus: "成果・役割・交渉・評価"
+    },
+    overall: {
+      lead: "全体運の物語として読むなら、",
+      focus: "生活の流れ・タイミング・人との巡り"
+    }
+  }[themeKey];
+
+  // card-specific mini scene (ざっくりでも雰囲気が出るように)
+  const scene = sceneByCard(card.name, themeKey);
+
+  // bridge with neighboring cards (軽い連結)
+  const bridge = makeBridge(positionKey, contextCards);
+
+  return `
+    <div><b>${posLine}</b></div>
+    <div>${tint.lead}あなたの<b>${tint.focus}</b>に、「<b>${escapeHtml(card.name)}</b>（${escapeHtml(card.keys.join("・"))}）」の色が差しています。</div>
+    <div style="margin-top:6px;">${scene}</div>
+    <div style="margin-top:6px; opacity:.92;">${bridge}</div>
+    <div style="margin-top:6px;"><span class="chip">合言葉</span> 「${keywordLine(card, themeKey)}」</div>
+  `;
+}
+
+function sceneByCard(cardName, themeKey){
+  const scenes = {
+    "騎士": {
+      love:"思いがけない連絡や“会いたい”の合図が、風みたいに届きます。待っていた返事なら、少し早足でやって来る気配。",
+      work:"案件や依頼が“急便”のように届きます。スピード優先の流れなので、返事は短くても即答が吉。",
+      overall:"予定が動きやすい日々。ニュースが運の流れを変えるので、軽いフットワークが味方。"
+    },
+    "クローバー": {
+      love:"偶然のラッキーが恋を軽くします。完璧を目指すより“今なら言える一言”が宝物に。",
+      work:"小さなチャンスが開きます。大勝負より“試しにやってみる”が次へ繋がる。",
+      overall:"運は小さく点滅中。見逃さないために、気分転換と笑顔を携帯して。"
+    },
+    "船": {
+      love:"距離や価値観の違いがテーマに。だけど同時に、関係は“旅”として深まります。小さな冒険を共有して。",
+      work:"新規分野・外部とのやり取りが増えそう。未知の海へ出るほど、経験値が上がります。",
+      overall:"環境や習慣が変わる兆し。移動・学び・挑戦が運を動かします。"
+    },
+    "家": {
+      love:"安心できる場所で、心がほどけます。急展開より“落ち着く関係”を育てると良い流れ。",
+      work:"基盤固めが吉。ルール・仕組み・居場所（チーム）を整えるほど成果が安定。",
+      overall:"生活の土台がテーマ。部屋や家計、日課を整えると、運の温度が上がります。"
+    },
+    "雲": {
+      love:"気持ちが読みにくい時。決めつけず、霧が晴れるまで“優しい確認”を。",
+      work:"情報が揃いにくく判断がブレます。今日は保留や分割判断が賢い。",
+      overall:"不透明さは一時的。見えないものを怖がるより、足元を照らす行動を。"
+    },
+    "花束": {
+      love:"好意が花開くカード。褒め言葉、誘い、プレゼント――“嬉しい出来事”が引き寄せられます。",
+      work:"評価・称賛・ご褒美。丁寧に仕上げたことほど、きれいに返ってくる運。",
+      overall:"気分が上向き。社交の場、楽しい予定が幸運を連れてきます。"
+    },
+    "鎌": {
+      love:"迷いを切る決断。関係の形を選び直す、または“言うべきこと”を言える瞬間。",
+      work:"判断のスピードが求められます。先延ばしより、切り替えの潔さが成果に。",
+      overall:"不要を手放すと運が軽くなる。予定の整理・断捨離が未来を呼び込みます。"
+    },
+    "ハート": {
+      love:"まっすぐな愛とときめき。温度を上げるのは、難しい駆け引きより“素直さ”。",
+      work:"やりがい・情熱が戻るサイン。好きの気持ちが、成果を最短で引き寄せます。",
+      overall:"心がコンパス。気持ちが温まるほうへ進むと、運の追い風が吹きます。"
+    },
+    "指輪": {
+      love:"約束・ご縁の強化。交際の話、未来の話が出やすい。曖昧さより“合意”を。",
+      work:"契約・継続案件。条件の確認が吉。握った約束は、あなたを守ります。",
+      overall:"繰り返し起きるテーマが“縁”として固まる時。良い習慣を結んで。"
+    },
+    "手紙": {
+      love:"メッセージ運。短文でも、丁寧さが恋を動かす。返事は早すぎなくて大丈夫。",
+      work:"書類・連絡・調整。文章が鍵。要点を先に書くとスムーズに進みます。",
+      overall:"情報が運を動かす日。連絡の見落としを減らすだけで、流れが整います。"
+    },
+    "太陽": {
+      love:"祝福の光。関係が明るい方向へ進みやすい。堂々と喜んでOK。",
+      work:"成功・達成・注目。やってきたことが照らされるタイミング。",
+      overall:"全体運アップ。自分を肯定するほど、良い出来事が集まります。"
+    },
+    "月": {
+      love:"気持ちが揺れるぶん、ロマンチック。相手のムードに合わせすぎず、自分の感覚を信じて。",
+      work:"評価・名声・感性の仕事。見られている時期なので、魅せ方を意識して。",
+      overall:"直感が冴える。眠る前のひらめきが、次の日の道しるべに。"
+    },
+    "鍵": {
+      love:"問題解決の扉が開きます。遠回りしていた答えが、すっと腑に落ちる予感。",
+      work:"突破口。核心を掴めば一気に進みます。『これだ』という一点に集中を。",
+      overall:"良い扉が開く運。迷うより“試す”と答えが出ます。"
+    },
+    "魚": {
+      love:"気持ちが流れるように満ちていきます。安心や豊かさを共有する話（生活の話）も出そう。",
+      work:"お金と流れ。売上・報酬・副収入のヒント。循環を整えるほど増えます。",
+      overall:"豊かさは“流れ”で増える。入るだけでなく、出す（学び・投資）も意識して。"
+    },
+    "錨": {
+      love:"落ち着いた関係へ。派手さより“続けられる安心”を選ぶと強い。",
+      work:"仕事運の安定。長期戦で勝てる配置。地道な積み上げが最大の武器。",
+      overall:"足場が固まる時期。焦らず、決めたことを続けて運を育てて。"
+    },
+    "十字架": {
+      love:"大切な学び。重さは“本気”の証。無理に明るくせず、誠実に向き合うほど癒えます。",
+      work:"責任・使命。抱え込みすぎ注意。分担や期限をはっきりさせると救われる。",
+      overall:"試練は通過点。『意味づけ』を変えると、運の見え方が変わります。"
+    }
+  };
+
+  // ないカードは汎用シーンを返す
+  if(scenes[cardName] && scenes[cardName][themeKey]) return scenes[cardName][themeKey];
+
+  const generic = {
+    love:"このカードは、恋の空気に“ヒント”を落としています。焦らず、相手と自分の心を丁寧に扱うほど、良い形で進みます。",
+    work:"このカードは、仕事の流れに“ポイント”を示しています。やるべきことを一つに絞るほど、成果が見えやすくなります。",
+    overall:"このカードは、全体の流れに“合図”を灯しています。小さな行動で運が動き出すタイプです。"
+  }[themeKey];
+
+  return generic;
+}
+
+function keywordLine(card, themeKey){
+  const k = card.keys;
+  const pick = k[randInt(k.length)];
+  const add = {
+    love:"心が温まる言葉を添えて。",
+    work:"条件と優先順位を明確に。",
+    overall:"タイミングを逃さず軽やかに。"
+  }[themeKey];
+  return `${pick}／${add}`;
+}
+
+function makeBridge(positionKey, cards){
+  const c0 = cards?.[0]?.name, c1 = cards?.[1]?.name, c2 = cards?.[2]?.name;
+
+  if(positionKey==="past" && c1){
+    return `そして今へつながる糸は「${escapeHtml(c1)}」へ。過去の出来事が、現在の空気の“前提”になっています。`;
+  }
+  if(positionKey==="present" && c0 && c2){
+    return `過去の「${escapeHtml(c0)}」で始まった流れが、いま「${escapeHtml(c1)}」で形になり、未来の「${escapeHtml(c2)}」へ渡っていきます。`;
+  }
+  if(positionKey==="future" && c1){
+    return `いまの「${escapeHtml(c1)}」の選び方次第で、未来の表情はより優しく（あるいは力強く）変えられます。`;
+  }
+  return "3枚は一枚の絵のように響き合います。気になる言葉を、いちばん大切な手がかりに。";
+}
+
+/* アドバイス：3枚全体を要約して、追加1枚の意味を重ねる */
+function adviceStory(themeKey, baseCards, adviceCard){
+  const themeLabel = THEMES[themeKey].label;
+  const [p, n, f] = baseCards;
+
+  const summary = `
+    <div><b>3枚の流れ（${themeLabel}）</b></div>
+    <div style="margin-top:6px;">
+      過去「<b>${escapeHtml(p.name)}</b>」で始まった出来事が、
+      現在「<b>${escapeHtml(n.name)}</b>」で空気を作り、
+      未来「<b>${escapeHtml(f.name)}</b>」へ向かっていきます。
+    </div>
+  `;
+
+  const guide = `
+    <div style="margin-top:10px;"><b>アドバイス「${escapeHtml(adviceCard.name)}」</b></div>
+    <div style="margin-top:6px;">
+      まるで物語の最後に灯る“ランタン”のように、
+      「${escapeHtml(adviceCard.keys.join("・"))}」があなたの歩幅を整えてくれます。
+    </div>
+    <div style="margin-top:8px;">
+      今日からできる一歩は――
+      <b>${oneStep(themeKey, baseCards, adviceCard)}</b>
+    </div>
+  `;
+
+  const ending = `
+    <div style="margin-top:10px;">
+      <span class="chip">やさしい締め</span>
+      運は固定ではなく、選び方で柔らかく変わります。あなたのペースで、いちばん安心できる未来へ。
+    </div>
+  `;
+
+  return summary + guide + ending;
+}
+
+function oneStep(themeKey, baseCards, adviceCard){
+  const name = adviceCard.name;
+  const byName = {
+    "手紙":"短い文章でOK。『要点＋気持ち』の順で連絡してみる。",
+    "鍵":"いちばん大事な一点を決めて、そこだけ先に進める。",
+    "太陽":"小さな成功を声に出して祝う（自分にも相手にも）。",
+    "雲":"判断を1日寝かせて、“確認質問”を一つだけ用意する。",
+    "指輪":"続けたい約束を一つ作る（頻度・条件を具体的に）。",
+    "花束":"ありがとう／素敵だね、を“今この瞬間”に渡す。",
+    "錨":"毎日5分でいいから、継続のルールを作る。",
+    "魚":"出入りの流れを整える（時間・お金・気力の使い道を見直す）。",
+    "ハート":"気持ちを一言で表す（好き／大切／嬉しい）を素直に。"
+  };
+  if(byName[name]) return byName[name];
+
+  return {
+    love:"自分の気持ちを丁寧に言葉にして、相手に“安心”を渡す。",
+    work:"優先順位を一つ上げて、まず最短の成果を作る。",
+    overall:"生活の小さな整え（片付け・睡眠・連絡）から運の流れを整える。"
+  }[themeKey];
+}
+
+/* Flow */
+function startReading(){
+  if(!selectedThemeKey) return;
+
+  usedIds.clear();
+  reading = {
+    themeKey: selectedThemeKey,
+    cards: [drawUniqueCard(), drawUniqueCard(), drawUniqueCard()],
+    advice: null,
+    step: 0 // 0: none open, 1: past open, 2: present open, 3: future open, 4: advice open
+  };
+
+  // reset UI
+  closeAllFlips();
+  adviceWrap.classList.remove("show");
+  resetSlot("past"); resetSlot("present"); resetSlot("future");
+  resetSlot("advice");
+
+  // set hints
+  document.getElementById("pastHint").textContent = POSITIONS[0].hint;
+  document.getElementById("presentHint").textContent = POSITIONS[1].hint;
+  document.getElementById("futureHint").textContent = POSITIONS[2].hint;
+
+  btnStart.disabled = true;
+  btnNext.disabled = false;
+  statusBox.innerHTML = `テーマは <b>${THEMES[reading.themeKey].label}</b>。まずは <b>「過去」</b> のカードを開きます。`;
+  toast.textContent = `準備OK。「次のカードを開く」を押してください。`;
+}
+
+function openNext(){
+  if(!reading) return;
+
+  const t = reading.themeKey;
+  const cards = reading.cards;
+
+  if(reading.step === 0){
+    // open past
+    setCardUI("past", cards[0]);
+    setStory("past", storyForCard(t, "past", cards[0], cards));
+    openFlip("past");
+    reading.step = 1;
+    statusBox.innerHTML = `次は <b>「現在」</b> を開きます。`;
+    return;
+  }
+
+  if(reading.step === 1){
+    setCardUI("present", cards[1]);
+    setStory("present", storyForCard(t, "present", cards[1], cards));
+    openFlip("present");
+    reading.step = 2;
+    statusBox.innerHTML = `次は <b>「未来」</b> を開きます。`;
+    return;
+  }
+
+  if(reading.step === 2){
+    setCardUI("future", cards[2]);
+    setStory("future", storyForCard(t, "future", cards[2], cards));
+    openFlip("future");
+    reading.step = 3;
+
+    statusBox.innerHTML = `3枚が揃いました。最後に <b>アドバイスカード</b> を引きます。`;
+    toast.textContent = `もう一度「次のカードを開く」を押すと、アドバイスが出ます。`;
+    return;
+  }
+
+  if(reading.step === 3){
+    // advice
+    reading.advice = drawUniqueCard();
+    setCardUI("advice", reading.advice);
+    document.getElementById("adviceHint").textContent = "今いちばん効く“ひと言”";
+    adviceThemeTitle.textContent = `${THEMES[t].tone}`;
+    document.getElementById("adviceStory").innerHTML = adviceStory(t, reading.cards, reading.advice);
+
+    adviceWrap.classList.add("show");
+    openFlip("advice");
+    reading.step = 4;
+
+    statusBox.innerHTML = `完成です。気になる言葉があれば、そこが“今の鍵”です。`;
+    btnNext.disabled = true;
+    btnStart.disabled = false; // 同テーマで引き直しできる
+    return;
+  }
+}
+
+function resetAll(){
+  selectedThemeKey = null;
+  reading = null;
+  usedIds.clear();
+
+  // buttons
+  btnStart.disabled = true;
+  btnNext.disabled = true;
+
+  // theme buttons
+  [pickLove, pickWork, pickOverall].forEach(b=>{
+    b.classList.remove("primary");
+    b.classList.add("ghost");
+  });
+
+  // ui reset
+  toast.textContent = "テーマを選ぶと「占いをはじめる」が押せます。";
+  statusBox.innerHTML = `まだカードは引かれていません。<b>テーマ</b>を選んでください。`;
+
+  closeAllFlips();
+  resetSlot("past"); resetSlot("present"); resetSlot("future"); resetSlot("advice");
+  adviceWrap.classList.remove("show");
+
+  document.getElementById("pastHint").textContent = "—";
+  document.getElementById("presentHint").textContent = "—";
+  document.getElementById("futureHint").textContent = "—";
+  document.getElementById("adviceHint").textContent = "—";
+  adviceThemeTitle.textContent = "あなたへのひと言";
+}
+
+// 初期化
+resetAll();
+</script>
+</body>
+</html>
