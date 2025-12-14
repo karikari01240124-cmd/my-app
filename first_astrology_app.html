@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>星座相性占い</title>
+<style>
+body {
+  font-family: "Hiragino Mincho ProN", serif;
+  background: linear-gradient(180deg, #0f2027, #203a43, #2c5364);
+  color: #ffffff;
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  background: rgba(255,255,255,0.1);
+  padding: 30px;
+  border-radius: 16px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(255,255,255,0.15);
+}
+
+h1 {
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  margin-top: 5px;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px;
+  width: 100%;
+  border: none;
+  border-radius: 20px;
+  background: #ffd369;
+  color: #333;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.result {
+  margin-top: 25px;
+  animation: fadeIn 1s ease;
+}
+
+.hidden {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🌙 星座相性占い</h1>
+  <p class="subtitle">生年月日から、ふたりのご縁を読み解きます</p>
+
+  <label>あなたの生年月日</label>
+  <input type="date" id="date1">
+
+  <label>お相手の生年月日</label>
+  <input type="date" id="date2">
+
+  <button onclick="checkCompatibility()">占う</button>
+
+  <div id="result" class="result hidden">
+    <h2 id="score"></h2>
+    <p id="message"></p>
+  </div>
+</div>
+
+<script>
+function getZodiac(date) {
+  const d = new Date(date);
+  const m = d.getMonth() + 1;
+  const day = d.getDate();
+
+  if ((m == 3 && day >= 21) || (m == 4 && day <= 19)) return "牡羊座";
+  if ((m == 4 && day >= 20) || (m == 5 && day <= 20)) return "牡牛座";
+  if ((m == 5 && day >= 21) || (m == 6 && day <= 21)) return "双子座";
+  if ((m == 6 && day >= 22) || (m == 7 && day <= 22)) return "蟹座";
+  if ((m == 7 && day >= 23) || (m == 8 && day <= 22)) return "獅子座";
+  if ((m == 8 && day >= 23) || (m == 9 && day <= 22)) return "乙女座";
+  if ((m == 9 && day >= 23) || (m == 10 && day <= 23)) return "天秤座";
+  if ((m == 10 && day >= 24) || (m == 11 && day <= 22)) return "蠍座";
+  if ((m == 11 && day >= 23) || (m == 12 && day <= 21)) return "射手座";
+  if ((m == 12 && day >= 22) || (m == 1 && day <= 19)) return "山羊座";
+  if ((m == 1 && day >= 20) || (m == 2 && day <= 18)) return "水瓶座";
+  return "魚座";
+}
+
+function getScore(z1, z2) {
+  if (z1 === z2) return 85;
+  const good = ["牡羊座獅子座","牡牛座乙女座","双子座天秤座","蟹座魚座","蠍座山羊座"];
+  if (good.includes(z1 + z2) || good.includes(z2 + z1)) return 80;
+  return 60;
+}
+
+function getMessage(score) {
+  if (score >= 80) return "魂レベルで惹かれ合う相性です。";
+  if (score >= 60) return "努力次第で、深く育っていくご縁です。";
+  return "学び合う関係になりやすいでしょう。";
+}
+
+function checkCompatibility() {
+  const d1 = document.getElementById("date1").value;
+  const d2 = document.getElementById("date2").value;
+
+  if (!d1 || !d2) {
+    alert("生年月日を入力してください");
+    return;
+  }
+
+  const z1 = getZodiac(d1);
+  const z2 = getZodiac(d2);
+  const score = getScore(z1, z2);
+
+  document.getElementById("score").textContent =
+    `${z1} × ${z2} の相性：${score}点`;
+  document.getElementById("message").textContent =
+    getMessage(score);
+
+  document.getElementById("result").classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
