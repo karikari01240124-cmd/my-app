@@ -1,0 +1,982 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ルノルマン 3枚引き（過去・現在・未来）+ アドバイス</title>
+  <style>
+    :root{
+      --cream:#fbf4e6;
+      --cream2:#fff8ee;
+      --ink:#3a2f2a;
+      --accent:#d8a85b;
+      --accent2:#caa3ff;
+      --shadow: 0 18px 40px rgba(58,47,42,.12);
+      --radius: 22px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 20% 10%, rgba(202,163,255,.18), transparent 55%),
+        radial-gradient(900px 520px at 85% 25%, rgba(216,168,91,.18), transparent 60%),
+        linear-gradient(180deg, var(--cream2), var(--cream));
+      min-height:100svh;
+      overflow-x:hidden;
+    }
+
+    /* きらきら背景（軽め） */
+    .sparkles{
+      position:fixed; inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(2px 2px at 12% 22%, rgba(255,255,255,.9), transparent 60%),
+        radial-gradient(2px 2px at 58% 18%, rgba(255,255,255,.75), transparent 60%),
+        radial-gradient(1.6px 1.6px at 78% 42%, rgba(255,255,255,.85), transparent 60%),
+        radial-gradient(2.2px 2.2px at 32% 68%, rgba(255,255,255,.8), transparent 60%),
+        radial-gradient(1.8px 1.8px at 88% 76%, rgba(255,255,255,.7), transparent 60%),
+        radial-gradient(1.4px 1.4px at 18% 82%, rgba(255,255,255,.8), transparent 60%);
+      opacity:.85;
+      filter: blur(.2px);
+      animation: twinkle 6.5s ease-in-out infinite;
+    }
+    @keyframes twinkle{
+      0%,100%{opacity:.65; transform: translateY(0)}
+      50%{opacity:.95; transform: translateY(-6px)}
+    }
+
+    header{
+      padding: 26px 16px 10px;
+      text-align:center;
+    }
+    .title{
+      font-weight: 800;
+      letter-spacing:.04em;
+      font-size: clamp(20px, 4vw, 34px);
+      margin:0 0 6px;
+    }
+    .subtitle{
+      margin:0;
+      opacity:.85;
+      font-size: 14px;
+    }
+
+    .wrap{
+      width:min(1060px, 92vw);
+      margin: 14px auto 40px;
+    }
+
+    .panel{
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(58,47,42,.08);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 18px;
+      backdrop-filter: blur(6px);
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+      align-items:start;
+    }
+    @media (max-width: 900px){
+      .row{grid-template-columns:1fr; }
+    }
+
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .seg{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .chip{
+      border-radius: 999px;
+      padding: 10px 14px;
+      border: 1px solid rgba(58,47,42,.12);
+      background: rgba(255,255,255,.7);
+      cursor:pointer;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+      user-select:none;
+      font-weight:700;
+      font-size: 14px;
+    }
+    .chip:hover{ transform: translateY(-1px); box-shadow: 0 8px 18px rgba(58,47,42,.10); }
+    .chip.active{
+      background: linear-gradient(180deg, rgba(216,168,91,.26), rgba(202,163,255,.18));
+      border-color: rgba(216,168,91,.55);
+    }
+
+    .btn{
+      border:0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-weight: 800;
+      cursor:pointer;
+      color: #2b221e;
+      background: linear-gradient(180deg, rgba(216,168,91,.75), rgba(216,168,91,.45));
+      box-shadow: 0 12px 26px rgba(216,168,91,.25);
+      transition: transform .12s ease, filter .12s ease;
+      letter-spacing:.02em;
+    }
+    .btn:hover{ transform: translateY(-1px); filter: brightness(1.02); }
+    .btn:disabled{
+      opacity:.6; cursor:not-allowed; transform:none;
+    }
+
+    .hint{
+      margin: 10px 0 0;
+      font-size: 13px;
+      opacity: .85;
+      line-height: 1.6;
+    }
+
+    .cards{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (max-width: 900px){
+      .cards{ grid-template-columns:1fr; }
+    }
+
+    .cardSlot{
+      border-radius: 20px;
+      padding: 12px;
+      border: 1px dashed rgba(58,47,42,.18);
+      background: rgba(255,255,255,.45);
+      position:relative;
+      overflow:hidden;
+    }
+    .slotTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+    .tag{
+      font-weight: 900;
+      font-size: 13px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(202,163,255,.18);
+      border: 1px solid rgba(202,163,255,.35);
+    }
+    .step{
+      font-size: 12px;
+      opacity:.75;
+      font-weight:700;
+    }
+
+    /* フリップ */
+    .flip{
+      width:100%;
+      aspect-ratio: 3 / 4.2;
+      perspective: 1200px;
+      border-radius: 18px;
+      overflow:hidden;
+      position:relative;
+    }
+    .flipInner{
+      position:absolute; inset:0;
+      transform-style:preserve-3d;
+      transition: transform .75s cubic-bezier(.2,.8,.2,1);
+    }
+    .flip.revealed .flipInner{ transform: rotateY(180deg); }
+
+    .face{
+      position:absolute; inset:0;
+      backface-visibility:hidden;
+      border-radius: 18px;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border: 1px solid rgba(58,47,42,.12);
+      box-shadow: 0 14px 30px rgba(58,47,42,.10);
+      background: rgba(255,255,255,.7);
+    }
+    .back{
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(202,163,255,.25), transparent 60%),
+        radial-gradient(900px 500px at 80% 90%, rgba(216,168,91,.28), transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.55));
+    }
+    .back::after{
+      content:"";
+      position:absolute; inset:-30%;
+      background:
+        radial-gradient(2px 2px at 12% 22%, rgba(255,255,255,.95), transparent 60%),
+        radial-gradient(2px 2px at 58% 18%, rgba(255,255,255,.75), transparent 60%),
+        radial-gradient(1.6px 1.6px at 78% 42%, rgba(255,255,255,.85), transparent 60%),
+        radial-gradient(2.2px 2.2px at 32% 68%, rgba(255,255,255,.8), transparent 60%),
+        radial-gradient(1.8px 1.8px at 88% 76%, rgba(255,255,255,.7), transparent 60%);
+      opacity:.9;
+      animation: twinkle 5.8s ease-in-out infinite;
+      filter: blur(.1px);
+    }
+    .backMark{
+      position:relative;
+      text-align:center;
+      padding: 14px;
+    }
+    .backMark .logo{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-weight:900;
+      letter-spacing:.06em;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(58,47,42,.12);
+      background: rgba(255,255,255,.55);
+    }
+    .backMark small{ display:block; margin-top:10px; opacity:.8; font-weight:700; }
+
+    .front{
+      transform: rotateY(180deg);
+      background: rgba(255,255,255,.85);
+    }
+
+    .cardImg{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .revealBtn{
+      margin-top: 10px;
+      width:100%;
+      border-radius: 14px;
+      padding: 10px 12px;
+      border: 1px solid rgba(58,47,42,.12);
+      background: rgba(255,255,255,.72);
+      cursor:pointer;
+      font-weight:800;
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+    .revealBtn:hover{ transform: translateY(-1px); box-shadow: 0 10px 18px rgba(58,47,42,.10); }
+    .revealBtn:disabled{ opacity:.55; cursor:not-allowed; transform:none; box-shadow:none; }
+
+    .desc{
+      margin-top: 10px;
+      font-size: 13px;
+      line-height: 1.85;
+      white-space: pre-wrap;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(58,47,42,.08);
+      border-radius: 16px;
+      padding: 12px 12px;
+      min-height: 96px;
+    }
+
+    .storyBox{
+      padding: 14px;
+    }
+    .storyTitle{
+      font-weight: 900;
+      margin: 0 0 8px;
+      font-size: 16px;
+      letter-spacing:.02em;
+    }
+    .storyText{
+      margin:0;
+      line-height:1.9;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+
+    .adviceArea{
+      margin-top: 14px;
+      display:none;
+    }
+    .adviceArea.show{ display:block; }
+
+    .hr{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(58,47,42,.14), transparent);
+      margin: 12px 0;
+    }
+
+    .toast{
+      margin-top: 10px;
+      font-size: 12px;
+      opacity:.78;
+    }
+  </style>
+</head>
+<body>
+  <div class="sparkles" aria-hidden="true"></div>
+
+  <header>
+    <h1 class="title">ルノルマンカード 3枚引き</h1>
+    <p class="subtitle">「過去 → 現在 → 未来」＋ 最後にアドバイスカード</p>
+  </header>
+
+  <div class="wrap">
+    <div class="panel row">
+      <section>
+        <div class="controls">
+          <div class="seg" role="group" aria-label="占いテーマ">
+            <button class="chip active" data-mode="love">恋愛</button>
+            <button class="chip" data-mode="work">仕事</button>
+            <button class="chip" data-mode="overall">全体運</button>
+          </div>
+          <div class="seg">
+            <button id="startBtn" class="btn">シャッフルして占う</button>
+            <button id="resetBtn" class="btn" style="background:linear-gradient(180deg, rgba(202,163,255,.65), rgba(202,163,255,.35)); box-shadow:0 12px 26px rgba(202,163,255,.22);">
+              リセット
+            </button>
+          </div>
+        </div>
+
+        <p class="hint">
+          ① テーマを選ぶ → ②「シャッフルして占う」 → ③「カードを開く」を <b>過去→現在→未来</b> の順に押してください。<br/>
+          最後に <b>アドバイスカード</b> が追加で開きます。
+        </p>
+
+        <div class="cards">
+          <!-- Past -->
+          <div class="cardSlot" id="slot0">
+            <div class="slotTop">
+              <span class="tag">過去</span>
+              <span class="step" id="step0">Step 1</span>
+            </div>
+
+            <div class="flip" id="flip0" aria-label="過去のカード">
+              <div class="flipInner">
+                <div class="face back">
+                  <div class="backMark">
+                    <div class="logo">✦ Lenormand ✦</div>
+                    <small>カードを開いてください</small>
+                  </div>
+                </div>
+                <div class="face front">
+                  <img class="cardImg" id="img0" alt="過去のカード画像" />
+                </div>
+              </div>
+            </div>
+            <button class="revealBtn" id="reveal0" disabled>カードを開く（過去）</button>
+            <div class="desc" id="desc0">まだカードは引かれていません。</div>
+          </div>
+
+          <!-- Present -->
+          <div class="cardSlot" id="slot1">
+            <div class="slotTop">
+              <span class="tag">現在</span>
+              <span class="step" id="step1">Step 2</span>
+            </div>
+
+            <div class="flip" id="flip1" aria-label="現在のカード">
+              <div class="flipInner">
+                <div class="face back">
+                  <div class="backMark">
+                    <div class="logo">✦ Lenormand ✦</div>
+                    <small>次のカードはまだ眠っています</small>
+                  </div>
+                </div>
+                <div class="face front">
+                  <img class="cardImg" id="img1" alt="現在のカード画像" />
+                </div>
+              </div>
+            </div>
+            <button class="revealBtn" id="reveal1" disabled>カードを開く（現在）</button>
+            <div class="desc" id="desc1">過去のカードを開いたら、次が開けます。</div>
+          </div>
+
+          <!-- Future -->
+          <div class="cardSlot" id="slot2">
+            <div class="slotTop">
+              <span class="tag">未来</span>
+              <span class="step" id="step2">Step 3</span>
+            </div>
+
+            <div class="flip" id="flip2" aria-label="未来のカード">
+              <div class="flipInner">
+                <div class="face back">
+                  <div class="backMark">
+                    <div class="logo">✦ Lenormand ✦</div>
+                    <small>未来はゆっくり開きましょう</small>
+                  </div>
+                </div>
+                <div class="face front">
+                  <img class="cardImg" id="img2" alt="未来のカード画像" />
+                </div>
+              </div>
+            </div>
+            <button class="revealBtn" id="reveal2" disabled>カードを開く（未来）</button>
+            <div class="desc" id="desc2">現在のカードを開いたら、次が開けます。</div>
+          </div>
+        </div>
+
+        <div class="adviceArea" id="adviceArea">
+          <div class="hr"></div>
+          <div class="cards" style="grid-template-columns:1fr; gap:12px;">
+            <div class="cardSlot">
+              <div class="slotTop">
+                <span class="tag" style="background: rgba(216,168,91,.18); border-color: rgba(216,168,91,.35);">アドバイス</span>
+                <span class="step">Bonus</span>
+              </div>
+
+              <div class="flip" id="flipA" aria-label="アドバイスカード">
+                <div class="flipInner">
+                  <div class="face back">
+                    <div class="backMark">
+                      <div class="logo">✦ Advice ✦</div>
+                      <small>最後に、背中を押す1枚</small>
+                    </div>
+                  </div>
+                  <div class="face front">
+                    <img class="cardImg" id="imgA" alt="アドバイスカード画像" />
+                  </div>
+                </div>
+              </div>
+
+              <button class="revealBtn" id="revealA" disabled>カードを開く（アドバイス）</button>
+              <div class="desc" id="descA">3枚の結果が出たら、最後のカードが引けます。</div>
+            </div>
+          </div>
+
+          <div class="panel storyBox" style="margin-top:12px;">
+            <h3 class="storyTitle">まとめのストーリー</h3>
+            <p class="storyText" id="summaryText">ここに、3枚＋アドバイスをつないだ物語と助言が表示されます。</p>
+            <div class="toast" id="seedInfo"></div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel storyBox" style="background: rgba(255,255,255,.62);">
+        <h3 class="storyTitle">この占いの見方</h3>
+        <p class="storyText">
+過去：いまに続く「きっかけ」や、心の癖・背景
+現在：いま起きている「状況」や、目の前のテーマ
+未来：この流れが向かう「展開」や、取りやすい選択
+
+最後のアドバイス：3枚を踏まえた「最短で整う一手」
+
+※ルノルマンは “出来事” の描写が得意なので、
+カード同士をストーリーでつないで読むと、現実的に活かしやすくなります。
+        </p>
+        <div class="hr"></div>
+        <p class="storyText" style="opacity:.85; font-size:13px;">
+テーマ（恋愛/仕事/全体運）に合わせて、説明文のニュアンスが変わります。
+        </p>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    // ルノルマン 36枚：名前 + シンボル + 意味（テーマ別）
+    // ※文章はアプリ用に短め＆ストーリー調に生成
+    // =========================
+    const DECK = [
+      { id:1,  name:"騎士", icon:"🐎", meanings:{
+        love:"連絡・進展。会いたい気持ちが走り出す。",
+        work:"スピード感。新案件や依頼が舞い込む。",
+        overall:"流れが動く。小さな一歩が追い風に。"
+      }},
+      { id:2,  name:"クローバー", icon:"🍀", meanings:{
+        love:"小さな幸運。肩の力が抜けて距離が縮む。",
+        work:"チャンスは短期。軽く試すと当たりやすい。",
+        overall:"ラッキーは“さりげなく”。拾った人が得をする。"
+      }},
+      { id:3,  name:"船", icon:"⛵", meanings:{
+        love:"距離・旅・価値観の広がり。遠くの縁。",
+        work:"取引・移動・拡大。視野を広げるほど実る。",
+        overall:"新しい海へ。未知を選ぶほど運が伸びる。"
+      }},
+      { id:4,  name:"家", icon:"🏠", meanings:{
+        love:"安心と居場所。素直さが関係を育てる。",
+        work:"基盤づくり。仕組み化・ルーティンが鍵。",
+        overall:"暮らしを整えると全体が整う。"
+      }},
+      { id:5,  name:"木", icon:"🌳", meanings:{
+        love:"ゆっくり深まる。癒しと信頼の積み重ね。",
+        work:"長期戦。体力・健康管理が成果に直結。",
+        overall:"根を張る時期。継続がいちばんの開運。"
+      }},
+      { id:6,  name:"雲", icon:"☁️", meanings:{
+        love:"もやもや・誤解。言葉の補足で晴れる。",
+        work:"不透明。情報不足なら“確認”が突破口。",
+        overall:"見えないだけ。急がず天気待ちが吉。"
+      }},
+      { id:7,  name:"蛇", icon:"🐍", meanings:{
+        love:"嫉妬・駆け引き。正直さが最強の解毒。",
+        work:"複雑・回り道。裏を読むより整理が効く。",
+        overall:"ねじれは解ける。焦らず一本ずつほどく。"
+      }},
+      { id:8,  name:"棺", icon:"⚰️", meanings:{
+        love:"終わりと再出発。古い想いを手放す合図。",
+        work:"区切り。役割変更・プロジェクトの幕引き。",
+        overall:"リセットの力。空白が次の幸運を呼ぶ。"
+      }},
+      { id:9,  name:"花束", icon:"💐", meanings:{
+        love:"好意・プレゼント。素直な喜びが恋を咲かせる。",
+        work:"評価・称賛。丁寧さが目に留まる。",
+        overall:"祝福ムード。ありがとうが運を増幅。"
+      }},
+      { id:10, name:"鎌", icon:"🌾", meanings:{
+        love:"決断・切り替え。迷いを断つと軽くなる。",
+        work:"締切・即断。スパッとやるほど評価。",
+        overall:"タイミング勝負。先延ばしを刈り取る。"
+      }},
+      { id:11, name:"鞭", icon:"⚡", meanings:{
+        love:"口論・刺激。熱はある、扱い方次第。",
+        work:"修正・反復。鍛えるほど強くなるテーマ。",
+        overall:"揺さぶりで目が覚める。習慣を見直す時。"
+      }},
+      { id:12, name:"鳥", icon:"🐦", meanings:{
+        love:"会話・噂。軽い連絡が未来をつくる。",
+        work:"打合せ・連絡網。小刻みに共有が吉。",
+        overall:"情報が飛び交う。聞く力が開運。"
+      }},
+      { id:13, name:"子ども", icon:"🧸", meanings:{
+        love:"はじまり・ピュア。照れを越えると進む。",
+        work:"新企画・新人。学び直しが武器になる。",
+        overall:"新鮮さ。小さく始めるほど続く。"
+      }},
+      { id:14, name:"狐", icon:"🦊", meanings:{
+        love:"慎重さ。相手を見る目を柔らかく鋭く。",
+        work:"要領・戦略。効率化で勝ちに行く。",
+        overall:"賢く守る運。無理をしない選択が正解。"
+      }},
+      { id:15, name:"熊", icon:"🐻", meanings:{
+        love:"守りたい気持ち。独占欲は“安心”に変換して。",
+        work:"影響力・資金。強気でまとめる力。",
+        overall:"頼れる力が来る。自分の器を大きく。"
+      }},
+      { id:16, name:"星", icon:"⭐", meanings:{
+        love:"希望・理想。願いを言葉にすると叶いやすい。",
+        work:"目標設定。数値化すると道が開く。",
+        overall:"導きの光。迷っても“北極星”はある。"
+      }},
+      { id:17, name:"コウノトリ", icon:"🕊️", meanings:{
+        love:"変化・進展。関係が次の段階へ。",
+        work:"異動・刷新。環境が動いて追い風に。",
+        overall:"流れが切り替わる。軽やかに乗ると吉。"
+      }},
+      { id:18, name:"犬", icon:"🐶", meanings:{
+        love:"信頼・味方。友情が恋に育つことも。",
+        work:"協力者。チームで成果が出る。",
+        overall:"支え合い。助けを求めるほど運が回る。"
+      }},
+      { id:19, name:"塔", icon:"🗼", meanings:{
+        love:"距離感・自立。近づく前に境界線を整える。",
+        work:"組織・公的。ルール順守が最短ルート。",
+        overall:"高い視点。孤独は“整える時間”になる。"
+      }},
+      { id:20, name:"庭", icon:"🏛️", meanings:{
+        love:"出会いの場。人の集まる所に縁がある。",
+        work:"社交・発信。見せ方で評価が変わる。",
+        overall:"外に開く運。交流が幸運の入口。"
+      }},
+      { id:21, name:"山", icon:"⛰️", meanings:{
+        love:"障害・壁。焦らず越える段取りを。",
+        work:"難関。正攻法で積むと突破できる。",
+        overall:"試練は“力を増やす坂道”。"
+      }},
+      { id:22, name:"道", icon:"🛤️", meanings:{
+        love:"選択。どちらを選んでも“覚悟”が鍵。",
+        work:"分岐点。優先順位を決めると楽になる。",
+        overall:"岐路。迷ったら“軽くなる方”へ。"
+      }},
+      { id:23, name:"ネズミ", icon:"🐭", meanings:{
+        love:"不安・消耗。小さな違和感は放置しない。",
+        work:"ロス・漏れ。見えない出費を点検。",
+        overall:"削られてる所を回復。休むのも開運。"
+      }},
+      { id:24, name:"ハート", icon:"❤️", meanings:{
+        love:"愛情の核心。素直な想いが主役。",
+        work:"情熱。好きが成果を引き寄せる。",
+        overall:"喜びが増える。大事にしたいものが見える。"
+      }},
+      { id:25, name:"指輪", icon:"💍", meanings:{
+        love:"約束・絆。関係の“形”が整う兆し。",
+        work:"契約・継続。長い付き合いが始まる。",
+        overall:"循環。繰り返しの中で運が育つ。"
+      }},
+      { id:26, name:"本", icon:"📘", meanings:{
+        love:"秘密・学び。知るほど優しくなれる。",
+        work:"研究・資格。勉強が仕事運を押し上げる。",
+        overall:"まだ開かれていない扉。学びが鍵。"
+      }},
+      { id:27, name:"手紙", icon:"✉️", meanings:{
+        love:"メッセージ。言葉が心をつなぐ。",
+        work:"書類・通知。連絡の質が成果に直結。",
+        overall:"知らせが来る。気づいた人から運が動く。"
+      }},
+      { id:28, name:"紳士", icon:"🤵", meanings:{
+        love:"男性性・主導。相手の本音が動きやすい。",
+        work:"キーパーソン（男性/主体）。主役は“決める人”。",
+        overall:"行動力の象徴。自分から動くほど良い。"
+      }},
+      { id:29, name:"淑女", icon:"👩", meanings:{
+        love:"女性性・受容。魅力が自然に伝わる。",
+        work:"キーパーソン（女性/支える人）。整える力が要。",
+        overall:"優しさの象徴。丁寧さが運を上げる。"
+      }},
+      { id:30, name:"ユリ", icon:"🌸", meanings:{
+        love:"成熟・品。落ち着いた愛、尊敬が深まる。",
+        work:"品位・信用。誠実さが武器になる。",
+        overall:"静かな幸福。整った暮らしがツキを呼ぶ。"
+      }},
+      { id:31, name:"太陽", icon:"☀️", meanings:{
+        love:"喜び・成功。素直に明るく進める時。",
+        work:"成果・勝利。評価が見える形になる。",
+        overall:"運気上昇。光の方へ進めば大丈夫。"
+      }},
+      { id:32, name:"月", icon:"🌙", meanings:{
+        love:"ロマン・感情。雰囲気が答えを教える。",
+        work:"評判・感性。クリエイティブが当たり。",
+        overall:"心の波。夜の静けさで整う運。"
+      }},
+      { id:33, name:"鍵", icon:"🗝️", meanings:{
+        love:"核心・解決。大事な話をすると扉が開く。",
+        work:"突破口。ポイントを押さえれば勝てる。",
+        overall:"正解が見つかる。迷いが収束する兆し。"
+      }},
+      { id:34, name:"魚", icon:"🐟", meanings:{
+        love:"豊かさ・自由。執着より流れが恋を育てる。",
+        work:"お金・売上。循環を増やすと伸びる。",
+        overall:"流れに乗る運。こだわりを緩めると増える。"
+      }},
+      { id:35, name:"錨", icon:"⚓", meanings:{
+        love:"安定・定着。じっくり続く関係へ。",
+        work:"安定職・継続案件。腰を据えると成果。",
+        overall:"落ち着く運。ブレない軸が幸運を固定する。"
+      }},
+      { id:36, name:"十字架", icon:"✝️", meanings:{
+        love:"学び・試練。背負いすぎず分け合う。",
+        work:"責任。重さの分だけ達成感がある。",
+        overall:"意味のある出来事。乗り越えると強くなる。"
+      }},
+    ];
+
+    const THEMES = {
+      love:   { label:"恋愛",   tone:"（恋の物語）" },
+      work:   { label:"仕事",   tone:"（仕事の物語）" },
+      overall:{ label:"全体運", tone:"（人生の物語）" },
+    };
+
+    // ストーリーを“過去/現在/未来/アドバイス”で自然につなぐテンプレ
+    const STORY = {
+      intro: {
+        love: "静かなクリーム色の光の中、あなたの恋のページがめくられます。",
+        work: "やわらかな光の机の上で、あなたの仕事の地図が広がっていきます。",
+        overall:"穏やかな空気の中、あなたの運の流れがゆっくり形になります。"
+      },
+      bridge01: "最初のカードは“これまで”の伏線。あなたが無意識に選んできた道が見えます。",
+      bridge12: "次のカードは“いま”の手触り。現実の温度をそのまま映します。",
+      bridge23: "そして最後のカードは“これから”の景色。選び方次第で色が変わります。",
+      adviceIntro:"最後に、3枚の流れを整える“ひと押し”のカードを引きます。"
+    };
+
+    // =========================
+    // 画像（外部なし）：SVGを動的生成
+    // =========================
+    function svgDataUrl({name, icon, id}){
+      const bg1 = "rgba(255,248,238,1)";
+      const bg2 = "rgba(251,244,230,1)";
+      const stroke = "rgba(58,47,42,.18)";
+      const gold = "rgba(216,168,91,.75)";
+      const purple = "rgba(202,163,255,.40)";
+      const safeName = escapeXml(name);
+      const safeIcon = escapeXml(icon);
+
+      const svg = `
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${bg1}"/>
+      <stop offset="100%" stop-color="${bg2}"/>
+    </linearGradient>
+    <radialGradient id="r1" cx="20%" cy="20%" r="70%">
+      <stop offset="0%" stop-color="${purple}" stop-opacity="1"/>
+      <stop offset="60%" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="r2" cx="80%" cy="90%" r="70%">
+      <stop offset="0%" stop-color="${gold}" stop-opacity="1"/>
+      <stop offset="60%" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="rgba(58,47,42,.18)"/>
+    </filter>
+  </defs>
+
+  <rect x="60" y="60" width="780" height="1080" rx="56" fill="url(#g)" stroke="${stroke}" stroke-width="6" filter="url(#shadow)"/>
+  <rect x="60" y="60" width="780" height="1080" rx="56" fill="url(#r1)"/>
+  <rect x="60" y="60" width="780" height="1080" rx="56" fill="url(#r2)"/>
+
+  <circle cx="450" cy="420" r="210" fill="rgba(255,255,255,.62)" stroke="${stroke}" stroke-width="5"/>
+  <text x="450" y="470" text-anchor="middle" font-size="170" font-family="system-ui, -apple-system, Segoe UI, Roboto">${safeIcon}</text>
+
+  <text x="450" y="720" text-anchor="middle" font-size="56" font-weight="800"
+        font-family="system-ui, -apple-system, Segoe UI, Roboto" fill="rgba(58,47,42,.92)">${safeName}</text>
+
+  <text x="450" y="790" text-anchor="middle" font-size="28" font-weight="700"
+        font-family="system-ui, -apple-system, Segoe UI, Roboto" fill="rgba(58,47,42,.65)">No.${id}  Lenormand</text>
+
+  <!-- きらきら -->
+  <g opacity=".9">
+    <path d="M145 190 l12 28 l28 12 l-28 12 l-12 28 l-12-28 l-28-12 l28-12z" fill="rgba(255,255,255,.9)"/>
+    <path d="M770 250 l10 22 l22 10 l-22 10 l-10 22 l-10-22 l-22-10 l22-10z" fill="rgba(255,255,255,.85)"/>
+    <path d="M720 980 l12 28 l28 12 l-28 12 l-12 28 l-12-28 l-28-12 l28-12z" fill="rgba(255,255,255,.8)"/>
+    <path d="M190 1010 l10 22 l22 10 l-22 10 l-10 22 l-10-22 l-22-10 l22-10z" fill="rgba(255,255,255,.75)"/>
+  </g>
+
+  <!-- 枠の飾り -->
+  <rect x="100" y="100" width="700" height="1000" rx="44" fill="none" stroke="rgba(216,168,91,.35)" stroke-width="4"/>
+</svg>`.trim();
+
+      return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    }
+
+    function escapeXml(str){
+      return String(str).replace(/[<>&'"]/g, c => ({
+        "<":"&lt;","&":"&amp;",">":"&gt;","'":"&apos;",'"':"&quot;"
+      }[c]));
+    }
+
+    // =========================
+    // 占いロジック
+    // =========================
+    const chips = [...document.querySelectorAll(".chip")];
+    const startBtn = document.getElementById("startBtn");
+    const resetBtn = document.getElementById("resetBtn");
+
+    const flips = [0,1,2].map(i => document.getElementById("flip"+i));
+    const imgs  = [0,1,2].map(i => document.getElementById("img"+i));
+    const descs = [0,1,2].map(i => document.getElementById("desc"+i));
+    const reveals = [0,1,2].map(i => document.getElementById("reveal"+i));
+
+    const adviceArea = document.getElementById("adviceArea");
+    const flipA = document.getElementById("flipA");
+    const imgA = document.getElementById("imgA");
+    const descA = document.getElementById("descA");
+    const revealA = document.getElementById("revealA");
+    const summaryText = document.getElementById("summaryText");
+    const seedInfo = document.getElementById("seedInfo");
+
+    let mode = "love";
+    let drawn = null; // {cards:[..3], advice:..}
+    let revealIndex = -1;
+    let seed = null;
+
+    chips.forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        chips.forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
+        mode = btn.dataset.mode;
+      });
+    });
+
+    function mulberry32(a){
+      return function(){
+        let t = a += 0x6D2B79F5;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      }
+    }
+
+    function pickUnique(deck, n, rng){
+      const arr = deck.slice();
+      // Fisher-Yates
+      for(let i=arr.length-1;i>0;i--){
+        const j = Math.floor(rng()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+      }
+      return arr.slice(0,n);
+    }
+
+    function resetUI(){
+      drawn = null;
+      revealIndex = -1;
+      adviceArea.classList.remove("show");
+      [0,1,2].forEach(i=>{
+        flips[i].classList.remove("revealed");
+        imgs[i].removeAttribute("src");
+        descs[i].textContent = (i===0)
+          ? "まだカードは引かれていません。"
+          : (i===1 ? "過去のカードを開いたら、次が開けます。" : "現在のカードを開いたら、次が開けます。");
+        reveals[i].disabled = true;
+      });
+      flipA.classList.remove("revealed");
+      imgA.removeAttribute("src");
+      descA.textContent = "3枚の結果が出たら、最後のカードが引けます。";
+      revealA.disabled = true;
+      summaryText.textContent = "ここに、3枚＋アドバイスをつないだ物語と助言が表示されます。";
+      seedInfo.textContent = "";
+    }
+
+    resetUI();
+
+    startBtn.addEventListener("click", ()=>{
+      // 毎回違う結果に：現在時刻でseed
+      seed = (Date.now() ^ (Math.random()*1e9)) >>> 0;
+      const rng = mulberry32(seed);
+
+      const picks = pickUnique(DECK, 4, rng); // 3枚 + advice
+      drawn = { cards: picks.slice(0,3), advice: picks[3] };
+
+      // 画像セット（まだ裏のまま）
+      drawn.cards.forEach((c,i)=>{
+        imgs[i].src = svgDataUrl(c);
+      });
+      imgA.src = svgDataUrl(drawn.advice);
+
+      // ボタン解放：まず過去だけ
+      revealIndex = 0;
+      reveals[0].disabled = false;
+      reveals[1].disabled = true;
+      reveals[2].disabled = true;
+
+      descs[0].textContent = "カードの準備ができました。過去から開きましょう。";
+      descs[1].textContent = "過去のカードを開いたら、次が開けます。";
+      descs[2].textContent = "現在のカードを開いたら、次が開けます。";
+
+      adviceArea.classList.remove("show");
+      flipA.classList.remove("revealed");
+      revealA.disabled = true;
+      descA.textContent = "3枚の結果が出たら、最後のカードが引けます。";
+      summaryText.textContent = "3枚がそろうと、まとめのストーリーが表示されます。";
+      seedInfo.textContent = `今回のシャッフルID: ${seed}`;
+    });
+
+    resetBtn.addEventListener("click", resetUI);
+
+    function phaseLabel(i){
+      return (i===0) ? "過去" : (i===1 ? "現在" : "未来");
+    }
+
+    function cardStoryLine(card, phase, mode){
+      const m = card.meanings[mode];
+      const opener = {
+        "過去": "それは、少し前のあなたの場面。",
+        "現在": "それはいま、あなたの目の前にある気配。",
+        "未来": "それはこれから、静かに輪郭を持つ出来事。"
+      }[phase];
+
+      const scent = {
+        love: {
+          "過去":"出会い方・距離の取り方が、いまの感情の形をつくりました。",
+          "現在":"言葉の温度、目線のやわらかさが、関係の空気を変えています。",
+          "未来":"小さな選択が、ふたりの“居心地”を決めていきます。"
+        },
+        work: {
+          "過去":"積み上げた経験が、いまの判断の速さになっています。",
+          "現在":"優先順位の付け方が、成果の出方を左右しています。",
+          "未来":"動き方ひとつで、評価や役割が変わっていきます。"
+        },
+        overall: {
+          "過去":"これまでの選択が、あなたの運の流れの川筋になりました。",
+          "現在":"いまの整え方が、運の通り道を広げています。",
+          "未来":"あなたが向ける意識が、景色の明るさを変えます。"
+        }
+      }[mode][phase];
+
+      return `${phase}のカード：『${card.name}』 ${card.icon}\n${opener}\n${m}\n${scent}`;
+    }
+
+    function adviceStoryLine(card, mode, threeCards){
+      const m = card.meanings[mode];
+      const names = threeCards.map(c=>c.name).join(" → ");
+      const tone = THEMES[mode].tone;
+      const wrap = {
+        love:"恋は、安心とときめきのバランスで育ちます。",
+        work:"仕事は、選択と集中で流れが整います。",
+        overall:"運は、整った場所に集まりやすいものです。"
+      }[mode];
+
+      return `アドバイスカード：『${card.name}』 ${card.icon} ${tone}\n` +
+             `ここまでの流れ（${names}）を一つに束ねるなら――\n` +
+             `${m}\n` +
+             `${wrap}\n` +
+             `“今日できる最小の一手”として、このカードの示す行動を選んでみてください。`;
+    }
+
+    function buildSummary(mode, cards, advice){
+      const intro = STORY.intro[mode];
+      const a = cardStoryLine(cards[0], "過去", mode);
+      const b = cardStoryLine(cards[1], "現在", mode);
+      const c = cardStoryLine(cards[2], "未来", mode);
+      const d = adviceStoryLine(advice, mode, cards);
+
+      // 3枚を繋ぐ短い物語（カード名だけ使って自然に）
+      const mini = (() => {
+        const [p, n, f] = cards.map(x=>x.name);
+        const t = THEMES[mode].label;
+
+        return `【${t}の物語】\n` +
+          `${p}が示す“これまで”から始まり、いまは${n}の気配が濃くなっています。\n` +
+          `その流れは${f}へ向かい、あなたが選ぶ言葉・行動で、明るさが調整されます。`;
+      })();
+
+      return `${intro}\n\n${STORY.bridge01}\n\n${a}\n\n${STORY.bridge12}\n\n${b}\n\n${STORY.bridge23}\n\n${c}\n\n${STORY.adviceIntro}\n\n${d}\n\n${mini}`;
+    }
+
+    function revealCard(i){
+      if(!drawn) return;
+
+      const card = drawn.cards[i];
+      const phase = phaseLabel(i);
+
+      flips[i].classList.add("revealed");
+      descs[i].textContent = cardStoryLine(card, phase, mode);
+
+      // 次を開ける
+      reveals[i].disabled = true;
+      if(i < 2){
+        reveals[i+1].disabled = false;
+      }else{
+        // 3枚終わり → アドバイスへ
+        adviceArea.classList.add("show");
+        revealA.disabled = false;
+        descA.textContent = "準備ができました。最後に、背中を押す1枚を開きましょう。";
+        summaryText.textContent = buildSummary(mode, drawn.cards, drawn.advice);
+      }
+    }
+
+    reveals.forEach((btn,i)=>{
+      btn.addEventListener("click", ()=>{
+        // 順番ガード
+        if(i===0 || (i===1 && flips[0].classList.contains("revealed")) || (i===2 && flips[1].classList.contains("revealed"))){
+          revealCard(i);
+        }
+      });
+    });
+
+    revealA.addEventListener("click", ()=>{
+      if(!drawn) return;
+      flipA.classList.add("revealed");
+      descA.textContent = adviceStoryLine(drawn.advice, mode, drawn.cards);
+      revealA.disabled = true;
+
+      // まとめを更新（アドバイス開いた後の締め）
+      const outro = {
+        love:"最後に深呼吸。あなたの恋は、あなたの優しさで進められます。",
+        work:"最後に一つだけ。明日の最初の15分を、カードの示す行動に使ってみてください。",
+        overall:"最後に整える。小さな片づけ・小さな約束が、運の入口になります。"
+      }[mode];
+
+      summaryText.textContent = buildSummary(mode, drawn.cards, drawn.advice) + `\n\n【ひとこと】\n${outro}`;
+    });
+  </script>
+</body>
+</html>
